@@ -227,28 +227,24 @@ digital-heritage-gallery/
 ├── index.html
 │   └── 主博物馆 / 项目入口
 │
-├── 帕特农神庙_final.html
-│   └── 帕特农神庙遗址与复原体验
+├── assets/
+│   ├── pastport-cover.png      # 封面图
+│   └── cover_video.mp4         # 开场动画
 │
-├── 圆明园_final.html
-│   └── 圆明园海晏堂体验
+├── images/
+│   ├── 雅典卫城_figure.png
+│   ├── 圆明园遗址.jpg
+│   └── 长安城.png
 │
-├── 长安城_model.html
-│   └── 长安城世界模型
-│
-├── 雅典卫城_model.html
-│   └── 雅典卫城世界模型
-│
-├── 雅典卫城与帕特农神庙.html
-│   └── 雅典卫城与帕特农神庙交互场景
-│
-├── 中国古代建筑规制介绍_model.html
-│   └── 中国古建筑交互学习模型
-│
-└── Image Assets
-    ├── 雅典卫城_figure.png
-    ├── 圆明园遗址.jpg
-    └── 长安城.png
+└── scenes/
+    ├── 圆明园_final.html
+    │   └── 圆明园海晏堂体验
+    ├── 长安城_model.html
+    │   └── 长安城世界模型
+    ├── 雅典卫城与帕特农神庙.html
+    │   └── 雅典卫城与帕特农神庙交互场景
+    └── 中国古代建筑规制介绍_model.html
+        └── 中国古建筑交互学习模型
 ```
 
 ---
