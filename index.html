@@ -649,6 +649,7 @@ function playRangerJump() {
 // 漫步范围：避开两侧展龛、展台与墙面（画廊内部安全区）
 const WANDER_BOUNDS = { xMin: -4.4, xMax: 4.4, zMin: -6.2, zMax: 6.2 };
 const WANDER_SPEED = 1.1;   // 米/秒，散步速度
+const TURN_SPEED = 6;       // 原地转身速度（弧度/秒）
 let wanderTarget = null;
 let wanderPauseUntil = 0;
 const _wanderPos = new THREE.Vector2();
@@ -687,12 +688,22 @@ function updateWander(dt, t) {
     stopWandering();
     return;
   }
+  // 目标朝向（模型 XZ 镜像，+PI 修正）
+  const targetYaw = Math.atan2(_wanderDir.x, _wanderDir.y) + Math.PI;
+  let dyaw = targetYaw - r.rotation.y;
+  dyaw = Math.atan2(Math.sin(dyaw), Math.cos(dyaw));   // 归一化到 [-π, π]
+  const maxTurn = TURN_SPEED * dt;
+  if (Math.abs(dyaw) > 0.12) {
+    // 还没转到位：原地转身，不移动 → 保证移动方向始终等于面对方向
+    r.rotation.y += Math.sign(dyaw) * Math.min(Math.abs(dyaw), maxTurn);
+    if (characterState.walking) stopWandering();
+    return;
+  }
+  r.rotation.y = targetYaw;
   _wanderDir.normalize();
   const step = Math.min(dist, WANDER_SPEED * dt);
   r.position.x += _wanderDir.x * step;
   r.position.z += _wanderDir.y * step;
-  // 面向移动方向（模型 XZ 镜像，需要 +PI 修正）
-  r.rotation.y = Math.atan2(_wanderDir.x, _wanderDir.y) + Math.PI;
   startWandering();
 }
 
