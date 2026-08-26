@@ -166,7 +166,7 @@ const RELINK_SPOTLIGHTS = false;
 const KEEP_EDITOR_CHARACTER_PLACEMENT = true;
 
 const canvas = document.getElementById('c');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -745,10 +745,10 @@ refreshExhibits();
 
 /* ---------- 四幅画：点击跳转对应展厅 ---------- */
 const PAINTING_LINKS = [
-  { name: 'video-screen',       href: '雅典卫城与帕特农神庙.html',       title: '雅典卫城与帕特农神庙' },
-  { name: 'video-screen-left',  href: '中国古代建筑规制介绍_model.html', title: '中国古代建筑规制' },
-  { name: 'video-screen-right', href: '圆明园_final.html',               title: '圆明园' },
-  { name: 'city-wall-art',      href: '长安城_model.html',               title: '长安城' }
+  { name: 'video-screen',       href: 'scenes/雅典卫城与帕特农神庙.html',       title: '雅典卫城与帕特农神庙' },
+  { name: 'video-screen-left',  href: 'scenes/中国古代建筑规制介绍_model.html', title: '中国古代建筑规制' },
+  { name: 'video-screen-right', href: 'scenes/圆明园_final.html',               title: '圆明园' },
+  { name: 'city-wall-art',      href: 'scenes/长安城_model.html',               title: '长安城' }
 ];
 const paintingMeshes = [];
 function refreshPaintings() {

@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Yuanmingyuan Digital Heritage Exploration System</title>
+<title>Parthenon Digital Heritage Exploration System / 帕特农神庙数字遗产探索系统</title>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#a8d8f0}
 canvas{display:block}
 #ui{position:fixed;inset:0;z-index:10;pointer-events:none;font-family:Inter,system-ui,sans-serif;color:#fff;user-select:none}
-#hud{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:none;padding:12px 22px;border:1px solid rgba(255,255,255,.35);border-radius:12px;background:rgba(16,27,34,.72);box-shadow:0 8px 25px rgba(0,0,0,.24);font-size:18px;font-weight:700;letter-spacing:.3px;backdrop-filter:blur(8px)}
+#hud{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:none;align-items:center;justify-content:center;gap:10px;padding:10px 16px;border:1px solid rgba(255,255,255,.35);border-radius:12px;background:rgba(16,27,34,.72);box-shadow:0 8px 25px rgba(0,0,0,.24);font-size:18px;font-weight:700;letter-spacing:.3px;backdrop-filter:blur(8px)}
 #startOverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:auto;background:radial-gradient(circle at 50% 42%,rgba(42,63,67,.72),rgba(5,10,13,.94));opacity:1;transition:opacity .8s ease}
 #startOverlay.hidden{opacity:0;pointer-events:none}
 .start-card{width:min(760px,calc(100% - 48px));padding:54px 42px;text-align:center;border:1px solid rgba(225,205,150,.42);border-radius:18px;background:rgba(13,22,25,.7);box-shadow:0 25px 80px rgba(0,0,0,.48);backdrop-filter:blur(12px)}
-.start-card:before{content:"圆明园 · DIGITAL HERITAGE";display:block;margin-bottom:18px;color:#d8c185;font-size:13px;letter-spacing:4px}
+.start-card:before{content:"帕特农神庙 · DIGITAL HERITAGE";display:block;margin-bottom:18px;color:#d8c185;font-size:13px;letter-spacing:4px}
 h1{margin:0 auto 18px;max-width:700px;font-family:Georgia,serif;font-size:clamp(34px,5vw,58px);line-height:1.08;font-weight:500;text-shadow:0 3px 16px rgba(0,0,0,.55)}
 .subtitle{max-width:640px;margin:0 auto 30px;color:#dce8e5;font-size:clamp(16px,2vw,20px);line-height:1.65}
 #startBtn{pointer-events:auto;padding:14px 34px;border:1px solid #e8d599;border-radius:8px;background:#b4944e;color:#101817;font-size:18px;font-weight:750;letter-spacing:.5px;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.3);transition:transform .2s,background .2s}
@@ -20,7 +20,7 @@ h1{margin:0 auto 18px;max-width:700px;font-family:Georgia,serif;font-size:clamp(
 #hint{position:absolute;bottom:22px;left:50%;display:none;transform:translateX(-50%);padding:9px 15px;border-radius:8px;background:rgba(9,18,21,.62);font-size:14px;color:#eaf1ee;white-space:nowrap}
 #interactionLabel{position:absolute;display:none;transform:translate(-50%,-130%);padding:7px 11px;border:1px solid rgba(255,221,126,.65);border-radius:7px;background:rgba(8,17,20,.88);color:#ffe59b;font-size:13px;white-space:nowrap}
 #unlockBanner{position:absolute;top:76px;left:50%;display:none;transform:translateX(-50%);pointer-events:auto;padding:16px 20px;text-align:center;border:1px solid rgba(232,213,153,.7);border-radius:12px;background:rgba(13,25,29,.92);box-shadow:0 12px 34px rgba(0,0,0,.35)}
-#enterReconstructionBtn,#narrateBtn,#closePopupBtn{pointer-events:auto;margin-top:11px;padding:9px 17px;border:1px solid #ead79b;border-radius:7px;background:#b4944e;color:#101817;font-weight:750;cursor:pointer}
+#enterReconstructionBtn,#endExplorationBtn,#narrateBtn,#closePopupBtn{pointer-events:auto;margin-top:0;padding:9px 17px;border:1px solid #ead79b;border-radius:7px;background:#b4944e;color:#101817;font-weight:750;cursor:pointer}
 #heritagePopup{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:auto;background:rgba(2,8,11,.68)}
 .popup-card{width:min(540px,calc(100% - 44px));padding:26px;border:1px solid rgba(232,213,153,.55);border-radius:15px;background:rgba(13,24,28,.97);box-shadow:0 22px 70px rgba(0,0,0,.55)}
 .popup-card h2{margin:0 0 12px;font-family:Georgia,serif;color:#f0d995}
@@ -44,12 +44,14 @@ h1{margin:0 auto 18px;max-width:700px;font-family:Georgia,serif;font-size:clamp(
 }
 #back-home:hover{background:rgba(94,44,31,.88);border-color:#c45c3e;color:#fff6e6;}
 </style></head>
-<body><a id="back-home" href="index.html" title="返回主页面">← 返回展厅</a>
+<body><a id="back-home" href="../index.html" title="返回主页面">← 返回展厅</a>
 <div id="ui">
-  <div id="hud">Heritage Beacons Activated: 0 / 4</div>
+  <div id="hud">
+    <button id="enterReconstructionBtn" type="button">Enter Reconstructed Parthenon</button>
+    <button id="endExplorationBtn" type="button">End Exploration</button>
+  </div>
   <div id="hint">WASD to move · Drag mouse to look</div>
   <div id="interactionLabel"></div>
-  <div id="unlockBanner">Historical Reconstruction Unlocked!<br><button id="enterReconstructionBtn">Enter Reconstructed Yuanmingyuan</button></div>
   <div id="heritagePopup">
     <div class="popup-card">
       <h2 id="popupTitle"></h2>
@@ -61,22 +63,22 @@ h1{margin:0 auto 18px;max-width:700px;font-family:Georgia,serif;font-size:clamp(
   </div>
   <div id="startOverlay">
     <div class="start-card">
-      <h1>Yuanmingyuan Digital Heritage Exploration System</h1>
-      <p class="subtitle">Explore the ruins, activate 4 Heritage Beacons, and unlock the reconstructed garden.</p>
+      <h1>Parthenon Digital Heritage Exploration System</h1>
+      <p class="subtitle">Explore the ancient ruins, activate 4 Heritage Beacons, and unlock the 3D reconstructed Parthenon Temple.</p>
       <button id="startBtn">Start Exploration</button>
     </div>
   </div>
   <div id="completionModal">
     <div class="completion-card">
       <h2>🎉 Exploration Completed!</h2>
-      <p>Congratulations! You have explored all Reconstructed Artifacts of Yuanmingyuan and unlocked the complete digital heritage experience.</p>
+      <p>Congratulations! You have successfully explored the Parthenon and unlocked the complete 3D digital heritage experience.</p>
       <div class="modal-actions"><button id="returnCompletionBtn">Return</button></div>
     </div>
   </div>
   <div id="documentaryModal">
     <div class="completion-card">
       <h2>AI Mini-Documentary</h2>
-      <p>A 20-second digital journey through Yuanmingyuan's history, ruins, and reconstruction.</p>
+      <p>A 20-second digital journey through the Parthenon's history, ruins, and reconstruction.</p>
       <video id="documentaryVideo" controls playsinline></video>
       <div class="modal-actions"><button id="closeDocumentaryBtn">Close</button></div>
     </div>
@@ -96,7 +98,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
-const __M=[{"src":"https://manifest-ai.online/Engine/UserData/cyz070701%40gmail.com/assets/models/2738425245ad513f51546be70a65b6e44d8d902e1c9b97c874c545cedb62eb8d.glb","name":"the reconstructed model","position":[0,0,15],"rotation":[-3.141592653589793,1.2246467991473532e-16,-3.141592653589793],"scale":[1,1,1]},{"src":"https://manifest-ai.online/Engine/UserData/cyz070701%40gmail.com/assets/models/f10a46da5bca834583a2a64a89df07dac16c6cf2813df412a38ef78001689c32.glb","name":"the ruin model","position":[0,4,0],"rotation":[0,0,0],"scale":[30,30,30]}];
+const __M=[{"src":"https://manifest-ai.online/Engine/UserData/cyz070701%40gmail.com/assets/models/00750fe911c4ab9c733f47cdbdcc1002401e276597e89860050d2fa1cb6eb132.glb","name":"帕特农神庙","position":[0,0.3,45],"rotation":[0,0,0],"scale":[5,5,5]},{"src":"https://manifest-ai.online/Engine/UserData/cyz070701%40gmail.com/assets/models/320358437859794e62cebf28338d7c26e4915698a7e798f64fc3d8c1f1f0636e.glb","name":"帕特农神庙遗址","position":[0,1,-5],"rotation":[0,0,0],"scale":[5,5,5]}];
 const _add=THREE.Object3D.prototype.add;
 window.__m3dEnvS=window.__m3dEnvS||function(s){if(!s)return false;if(s.name==="RoomEnvironment"||s.name==="DebugEnvironment")return true;return !s.background&&!s.fog&&s.children.length>0&&!s.children.some(function(c){return !!c.name;});};
 THREE.Object3D.prototype.add=function(){ if(this.isScene){var _c=window.__M3D_SCENE;if(!_c||(window.__m3dEnvS(_c)&&!window.__m3dEnvS(this)))window.__M3D_SCENE=this;} return _add.apply(this,arguments); };
@@ -116,7 +118,7 @@ var _n=0,_iv=setInterval(function(){_n++;var _s=window.__M3D_SCENE;if(_s&&(!wind
 </script><!--__/M3D_INJ__-->
 <!--__M3D_INJ__--><script type="module">
 import * as THREE from 'three';
-const __L=[{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"02b2ed1b-9495-4020-b0ac-350391f3efea","type":"AmbientLight","name":"AmbientLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"color":16777215,"intensity":0.6}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"d9155505-81f3-482f-a76e-9f79bcb88908","type":"DirectionalLight","name":"DirectionalLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,-2,4,2,1],"up":[0,1,0],"color":16777215,"intensity":2.2,"shadow":{"camera":{"uuid":"e6b57459-1ce2-4d55-adc7-e39a7f40888f","type":"OrthographicCamera","layers":1,"up":[0,1,0],"zoom":1,"left":-5,"right":5,"top":5,"bottom":-5,"near":0.5,"far":500}},"target":"09174731-07c5-419b-8075-2c2ab0d3e969"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"415f4cb4-979a-4e77-873c-73c02046e9a7","type":"SphereGeometry","radius":400,"widthSegments":32,"heightSegments":15,"phiStart":0,"phiLength":6.283185307179586,"thetaStart":0,"thetaLength":3.141592653589793}],"materials":[{"uuid":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2","type":"MeshBasicMaterial","color":16777215,"map":"85fe560b-67e8-4371-8631-21999d68cba6","envMapRotation":[0,0,0,"XYZ"],"reflectivity":1,"refractionRatio":0.98,"side":1,"blendColor":0,"depthWrite":false,"toneMapped":false}],"textures":[{"uuid":"85fe560b-67e8-4371-8631-21999d68cba6","name":"","image":"2b426cad-3793-47fe-9777-6ddfc437adc3","mapping":300,"channel":0,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1001,1001],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"2b426cad-3793-47fe-9777-6ddfc437adc3","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAIACAYAAACo4b0GAAAAAXNSR0IArs4c6QAABDxJREFUWEedlN1WU0kQhavf/4VEVEZRUVBHnfwDSQjhH+dOBQEza+/aXaf7hGTW8q7X11/tquoTSE86vxdmydKTzmJhZq1DSiRyNuBkklC10Y2q34uE8iAbUdVd6IpEjssgCHyacwqipk+7qgqnIGiaUC5nE4e0TNhCE272lEwZYzjBgeUinHCz++CBz8LpKacgDz5GkGe9B39VEL6hEx4qkiw976t7OEGe56rHiFrQQYsXOacg2eljQjqPk7jSIWFll83SFg7eQjlbA1296N/77kFCLsi9vyEIx9ga3Pv7/JVztvpwrCQDJdPxK1RlpyIvh5onnJeQ0RSETStHRGO4TEdNW0RX7P5qmKsoB1k6IPDV8M43RRV/CV5ulrZHOoRTEX6CINvMKatIssMxnJil1zl5e3TnE5LgqiAa7PVIyXA4YUHuFhwjyJv9dpUTs/QGOSgPpyIcI+S3UbX/y9+nIJqZBIFvK6cmByEjxyztHGieqKoIxwiyg2QEgvhVQ375D3vnQMnvcnJBNPy7xkFgstQiVpD3h+0qJ3L4CQpy658gSHXgzO8Pb/0NcVWTXSR74K1fBdnNVbtjdXcCZ6ycIHtLzt5YTeFw5nD2kONEjh/M0ocVRDInpIOVUVWQKMdhElc3vntB1P3jJJre+BsG+ThRVUPGNz4zCJuG8wk5foUqs1QRyp+m6gXHCWQ05SE7zRXI31ONAYdvuIrElQ78ZbocpHQ+48oDf/r7BOEBVZ+P8iGcimD4L7VjLcJXrRxuEeTLEbqL6CrIT//7Cucrenk5rszSV5SjBQ8kM1W1SMhm6Z+ZVvbyIH9y4MweqENNOsdx9cPfuQM5V3GLcDqz7OSqkOG4DAcrL5NuUyUnSPdYySToXhMkV4RbrCG9ufYKpyL8cEF6uXtNsAUI96KDpg2Za+Z+7tUjMUsVYS8SL//hgUH6UXWiXmvI4ER7hVMRPssaMjjRhHA4RkEwWCrIEL08UFVDHPAsICwfnmqehmSHcnZcboh6eaBZGuWcguh5QbjX6HQl8Ss5/KOuCfYKsg+5cirCUffP1AtVBcFV7gWHL9Yi2cHMBznHWwRRCyY3DgNLx69EuFeLlPLheSGzqiJMXkMO0QsTwnF5meQW43w4PP/u/zcKonISD/zuDxUk5PFFyEUOP3c4kwvtNc69CqLfRuXwoYJMULWacNPJhbpP0Qvda5IdblE5NZlGzqVmdmKWppfaNJyjJaci3KJFrCBHl5o5HCdyuFc4M/TCXuFUhPLsSjPDqcksJ4ezgqDFcc6hU5MrJTdOQ7TO8ZW2oOPlQfQpg8yvNXNDIOPpHne41/xaveaUSZRTkGVHP+NwTiLnWnuRoDtasFc4fsgEzjryTb0ahyQCzdLpN00Ih1dOcOAYpdMilZx7RflZ5OQDCWauHbQI+exfdf8fwlErpyEIPK9yKhJX+fAfPiRX4jpUXuwAAAAASUVORK5CYII="}],"object":{"uuid":"c6bd5824-bc57-4a38-b54f-72a75353d536","type":"Mesh","name":"sky","layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"geometry":"415f4cb4-979a-4e77-873c-73c02046e9a7","material":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"77af592a-14e2-4516-a184-fa6df38ac102","type":"PlaneGeometry","width":100,"height":100,"widthSegments":1,"heightSegments":1}],"materials":[{"uuid":"de7d6e80-967a-4ec9-a954-d51d508221fc","type":"MeshStandardMaterial","color":16777215,"roughness":0.95,"metalness":0,"emissive":0,"map":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","envMapRotation":[0,0,0,"XYZ"],"envMapIntensity":1,"side":2,"blendColor":0}],"textures":[{"uuid":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","name":"","image":"86417d19-fcbd-400c-9293-4ebcd91dc85c","mapping":300,"channel":0,"repeat":[25,25],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1003,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"86417d19-fcbd-400c-9293-4ebcd91dc85c","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAACdJREFUGFdjvHnz3n8GBgYGSUkREMXAiCHw6dMnsIrnz99AVKALAAC1+hTNF4NnRwAAAABJRU5ErkJggg=="}],"object":{"uuid":"606877d1-0ef2-492a-b3a1-86029ebb72e7","type":"Mesh","name":"ground","userData":{"__m3d_phys":{"collider":"mesh"}},"layers":1,"matrix":[1,0,0,0,0,2.220446049250313e-16,-1,0,0,1,2.220446049250313e-16,0,0,0,0,1],"up":[0,1,0],"geometry":"77af592a-14e2-4516-a184-fa6df38ac102","material":"de7d6e80-967a-4ec9-a954-d51d508221fc"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"02b2ed1b-9495-4020-b0ac-350391f3efea","type":"AmbientLight","name":"AmbientLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"color":16777215,"intensity":0.6}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"d9155505-81f3-482f-a76e-9f79bcb88908","type":"DirectionalLight","name":"DirectionalLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,-2,4,2,1],"up":[0,1,0],"color":16777215,"intensity":2.2,"shadow":{"camera":{"uuid":"e6b57459-1ce2-4d55-adc7-e39a7f40888f","type":"OrthographicCamera","layers":1,"up":[0,1,0],"zoom":1,"left":-5,"right":5,"top":5,"bottom":-5,"near":0.5,"far":500}},"target":"c5953a1c-b182-4980-985a-39b059db7f9d"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"415f4cb4-979a-4e77-873c-73c02046e9a7","type":"SphereGeometry","radius":400,"widthSegments":32,"heightSegments":15,"phiStart":0,"phiLength":6.283185307179586,"thetaStart":0,"thetaLength":3.141592653589793}],"materials":[{"uuid":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2","type":"MeshBasicMaterial","color":16777215,"map":"85fe560b-67e8-4371-8631-21999d68cba6","envMapRotation":[0,0,0,"XYZ"],"reflectivity":1,"refractionRatio":0.98,"side":1,"blendColor":0,"depthWrite":false,"toneMapped":false}],"textures":[{"uuid":"85fe560b-67e8-4371-8631-21999d68cba6","name":"","image":"f112671b-4b37-4ed3-8ee6-a1155e03de69","mapping":300,"channel":0,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1001,1001],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"f112671b-4b37-4ed3-8ee6-a1155e03de69","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAIACAYAAACo4b0GAAAAAXNSR0IArs4c6QAABDxJREFUWEedlN1WU0kQhavf/4VEVEZRUVBHnfwDSQjhH+dOBQEza+/aXaf7hGTW8q7X11/tquoTSE86vxdmydKTzmJhZq1DSiRyNuBkklC10Y2q34uE8iAbUdVd6IpEjssgCHyacwqipk+7qgqnIGiaUC5nE4e0TNhCE272lEwZYzjBgeUinHCz++CBz8LpKacgDz5GkGe9B39VEL6hEx4qkiw976t7OEGe56rHiFrQQYsXOacg2eljQjqPk7jSIWFll83SFg7eQjlbA1296N/77kFCLsi9vyEIx9ga3Pv7/JVztvpwrCQDJdPxK1RlpyIvh5onnJeQ0RSETStHRGO4TEdNW0RX7P5qmKsoB1k6IPDV8M43RRV/CV5ulrZHOoRTEX6CINvMKatIssMxnJil1zl5e3TnE5LgqiAa7PVIyXA4YUHuFhwjyJv9dpUTs/QGOSgPpyIcI+S3UbX/y9+nIJqZBIFvK6cmByEjxyztHGieqKoIxwiyg2QEgvhVQ375D3vnQMnvcnJBNPy7xkFgstQiVpD3h+0qJ3L4CQpy658gSHXgzO8Pb/0NcVWTXSR74K1fBdnNVbtjdXcCZ6ycIHtLzt5YTeFw5nD2kONEjh/M0ocVRDInpIOVUVWQKMdhElc3vntB1P3jJJre+BsG+ThRVUPGNz4zCJuG8wk5foUqs1QRyp+m6gXHCWQ05SE7zRXI31ONAYdvuIrElQ78ZbocpHQ+48oDf/r7BOEBVZ+P8iGcimD4L7VjLcJXrRxuEeTLEbqL6CrIT//7Cucrenk5rszSV5SjBQ8kM1W1SMhm6Z+ZVvbyIH9y4MweqENNOsdx9cPfuQM5V3GLcDqz7OSqkOG4DAcrL5NuUyUnSPdYySToXhMkV4RbrCG9ufYKpyL8cEF6uXtNsAUI96KDpg2Za+Z+7tUjMUsVYS8SL//hgUH6UXWiXmvI4ER7hVMRPssaMjjRhHA4RkEwWCrIEL08UFVDHPAsICwfnmqehmSHcnZcboh6eaBZGuWcguh5QbjX6HQl8Ss5/KOuCfYKsg+5cirCUffP1AtVBcFV7gWHL9Yi2cHMBznHWwRRCyY3DgNLx69EuFeLlPLheSGzqiJMXkMO0QsTwnF5meQW43w4PP/u/zcKonISD/zuDxUk5PFFyEUOP3c4kwvtNc69CqLfRuXwoYJMULWacNPJhbpP0Qvda5IdblE5NZlGzqVmdmKWppfaNJyjJaci3KJFrCBHl5o5HCdyuFc4M/TCXuFUhPLsSjPDqcksJ4ezgqDFcc6hU5MrJTdOQ7TO8ZW2oOPlQfQpg8yvNXNDIOPpHne41/xaveaUSZRTkGVHP+NwTiLnWnuRoDtasFc4fsgEzjryTb0ahyQCzdLpN00Ih1dOcOAYpdMilZx7RflZ5OQDCWauHbQI+exfdf8fwlErpyEIPK9yKhJX+fAfPiRX4jpUXuwAAAAASUVORK5CYII="}],"object":{"uuid":"c6bd5824-bc57-4a38-b54f-72a75353d536","type":"Mesh","name":"sky","layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"geometry":"415f4cb4-979a-4e77-873c-73c02046e9a7","material":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"77af592a-14e2-4516-a184-fa6df38ac102","type":"PlaneGeometry","width":100,"height":100,"widthSegments":1,"heightSegments":1}],"materials":[{"uuid":"de7d6e80-967a-4ec9-a954-d51d508221fc","type":"MeshStandardMaterial","color":16777215,"roughness":0.95,"metalness":0,"emissive":0,"map":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","envMapRotation":[0,0,0,"XYZ"],"envMapIntensity":1,"side":2,"blendColor":0}],"textures":[{"uuid":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","name":"","image":"65e6329f-5191-4129-89df-02527157cfc2","mapping":300,"channel":0,"repeat":[25,25],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1003,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"65e6329f-5191-4129-89df-02527157cfc2","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAACdJREFUGFdjvHnz3n8GBgYGSUkREMXAiCHw6dMnsIrnz99AVKALAAC1+hTNF4NnRwAAAABJRU5ErkJggg=="}],"object":{"uuid":"606877d1-0ef2-492a-b3a1-86029ebb72e7","type":"Mesh","name":"ground","userData":{"__m3d_phys":{"collider":"mesh"}},"layers":1,"matrix":[1,0,0,0,0,2.220446049250313e-16,-1,0,0,1,2.220446049250313e-16,0,0,0,0,1],"up":[0,1,0],"geometry":"77af592a-14e2-4516-a184-fa6df38ac102","material":"de7d6e80-967a-4ec9-a954-d51d508221fc"}}];
+const __L=[{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"02b2ed1b-9495-4020-b0ac-350391f3efea","type":"AmbientLight","name":"AmbientLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"color":16777215,"intensity":0.6}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"d9155505-81f3-482f-a76e-9f79bcb88908","type":"DirectionalLight","name":"DirectionalLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,-2,4,2,1],"up":[0,1,0],"color":16777215,"intensity":2.2,"shadow":{"camera":{"uuid":"e6b57459-1ce2-4d55-adc7-e39a7f40888f","type":"OrthographicCamera","layers":1,"up":[0,1,0],"zoom":1,"left":-5,"right":5,"top":5,"bottom":-5,"near":0.5,"far":500}},"target":"167538fa-18a0-4b07-a169-d92d4df23e0c"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"415f4cb4-979a-4e77-873c-73c02046e9a7","type":"SphereGeometry","radius":400,"widthSegments":32,"heightSegments":15,"phiStart":0,"phiLength":6.283185307179586,"thetaStart":0,"thetaLength":3.141592653589793}],"materials":[{"uuid":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2","type":"MeshBasicMaterial","color":16777215,"map":"85fe560b-67e8-4371-8631-21999d68cba6","envMapRotation":[0,0,0,"XYZ"],"reflectivity":1,"refractionRatio":0.98,"side":1,"blendColor":0,"depthWrite":false,"toneMapped":false}],"textures":[{"uuid":"85fe560b-67e8-4371-8631-21999d68cba6","name":"","image":"19fa2ebd-f1bc-44c0-9ae1-9b90692c5465","mapping":300,"channel":0,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1001,1001],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"19fa2ebd-f1bc-44c0-9ae1-9b90692c5465","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAIACAYAAACo4b0GAAAAAXNSR0IArs4c6QAABDxJREFUWEedlN1WU0kQhavf/4VEVEZRUVBHnfwDSQjhH+dOBQEza+/aXaf7hGTW8q7X11/tquoTSE86vxdmydKTzmJhZq1DSiRyNuBkklC10Y2q34uE8iAbUdVd6IpEjssgCHyacwqipk+7qgqnIGiaUC5nE4e0TNhCE272lEwZYzjBgeUinHCz++CBz8LpKacgDz5GkGe9B39VEL6hEx4qkiw976t7OEGe56rHiFrQQYsXOacg2eljQjqPk7jSIWFll83SFg7eQjlbA1296N/77kFCLsi9vyEIx9ga3Pv7/JVztvpwrCQDJdPxK1RlpyIvh5onnJeQ0RSETStHRGO4TEdNW0RX7P5qmKsoB1k6IPDV8M43RRV/CV5ulrZHOoRTEX6CINvMKatIssMxnJil1zl5e3TnE5LgqiAa7PVIyXA4YUHuFhwjyJv9dpUTs/QGOSgPpyIcI+S3UbX/y9+nIJqZBIFvK6cmByEjxyztHGieqKoIxwiyg2QEgvhVQ375D3vnQMnvcnJBNPy7xkFgstQiVpD3h+0qJ3L4CQpy658gSHXgzO8Pb/0NcVWTXSR74K1fBdnNVbtjdXcCZ6ycIHtLzt5YTeFw5nD2kONEjh/M0ocVRDInpIOVUVWQKMdhElc3vntB1P3jJJre+BsG+ThRVUPGNz4zCJuG8wk5foUqs1QRyp+m6gXHCWQ05SE7zRXI31ONAYdvuIrElQ78ZbocpHQ+48oDf/r7BOEBVZ+P8iGcimD4L7VjLcJXrRxuEeTLEbqL6CrIT//7Cucrenk5rszSV5SjBQ8kM1W1SMhm6Z+ZVvbyIH9y4MweqENNOsdx9cPfuQM5V3GLcDqz7OSqkOG4DAcrL5NuUyUnSPdYySToXhMkV4RbrCG9ufYKpyL8cEF6uXtNsAUI96KDpg2Za+Z+7tUjMUsVYS8SL//hgUH6UXWiXmvI4ER7hVMRPssaMjjRhHA4RkEwWCrIEL08UFVDHPAsICwfnmqehmSHcnZcboh6eaBZGuWcguh5QbjX6HQl8Ss5/KOuCfYKsg+5cirCUffP1AtVBcFV7gWHL9Yi2cHMBznHWwRRCyY3DgNLx69EuFeLlPLheSGzqiJMXkMO0QsTwnF5meQW43w4PP/u/zcKonISD/zuDxUk5PFFyEUOP3c4kwvtNc69CqLfRuXwoYJMULWacNPJhbpP0Qvda5IdblE5NZlGzqVmdmKWppfaNJyjJaci3KJFrCBHl5o5HCdyuFc4M/TCXuFUhPLsSjPDqcksJ4ezgqDFcc6hU5MrJTdOQ7TO8ZW2oOPlQfQpg8yvNXNDIOPpHne41/xaveaUSZRTkGVHP+NwTiLnWnuRoDtasFc4fsgEzjryTb0ahyQCzdLpN00Ih1dOcOAYpdMilZx7RflZ5OQDCWauHbQI+exfdf8fwlErpyEIPK9yKhJX+fAfPiRX4jpUXuwAAAAASUVORK5CYII="}],"object":{"uuid":"c6bd5824-bc57-4a38-b54f-72a75353d536","type":"Mesh","name":"sky","layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"geometry":"415f4cb4-979a-4e77-873c-73c02046e9a7","material":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"77af592a-14e2-4516-a184-fa6df38ac102","type":"PlaneGeometry","width":100,"height":100,"widthSegments":1,"heightSegments":1}],"materials":[{"uuid":"de7d6e80-967a-4ec9-a954-d51d508221fc","type":"MeshStandardMaterial","color":16777215,"roughness":0.95,"metalness":0,"emissive":0,"map":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","envMapRotation":[0,0,0,"XYZ"],"envMapIntensity":1,"side":2,"blendColor":0}],"textures":[{"uuid":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","name":"","image":"9be21b71-8524-41cd-aa9b-ae2964676d56","mapping":300,"channel":0,"repeat":[25,25],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1003,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"9be21b71-8524-41cd-aa9b-ae2964676d56","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAACdJREFUGFdjvHnz3n8GBgYGSUkREMXAiCHw6dMnsIrnz99AVKALAAC1+hTNF4NnRwAAAABJRU5ErkJggg=="}],"object":{"uuid":"606877d1-0ef2-492a-b3a1-86029ebb72e7","type":"Mesh","name":"ground","userData":{"__m3d_phys":{"collider":"mesh"}},"layers":1,"matrix":[1,0,0,0,0,2.220446049250313e-16,-1,0,0,1,2.220446049250313e-16,0,0,0,0,1],"up":[0,1,0],"geometry":"77af592a-14e2-4516-a184-fa6df38ac102","material":"de7d6e80-967a-4ec9-a954-d51d508221fc"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"02b2ed1b-9495-4020-b0ac-350391f3efea","type":"AmbientLight","name":"AmbientLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"color":16777215,"intensity":0.6}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"d9155505-81f3-482f-a76e-9f79bcb88908","type":"DirectionalLight","name":"DirectionalLight","visible":false,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,-2,4,2,1],"up":[0,1,0],"color":16777215,"intensity":2.2,"shadow":{"camera":{"uuid":"e6b57459-1ce2-4d55-adc7-e39a7f40888f","type":"OrthographicCamera","layers":1,"up":[0,1,0],"zoom":1,"left":-5,"right":5,"top":5,"bottom":-5,"near":0.5,"far":500}},"target":"c1e26d99-d2b5-484f-8b9d-e0530b366919"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"415f4cb4-979a-4e77-873c-73c02046e9a7","type":"SphereGeometry","radius":400,"widthSegments":32,"heightSegments":15,"phiStart":0,"phiLength":6.283185307179586,"thetaStart":0,"thetaLength":3.141592653589793}],"materials":[{"uuid":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2","type":"MeshBasicMaterial","color":16777215,"map":"85fe560b-67e8-4371-8631-21999d68cba6","envMapRotation":[0,0,0,"XYZ"],"reflectivity":1,"refractionRatio":0.98,"side":1,"blendColor":0,"depthWrite":false,"toneMapped":false}],"textures":[{"uuid":"85fe560b-67e8-4371-8631-21999d68cba6","name":"","image":"b87c2925-7a61-45d9-90e6-eff4a938f978","mapping":300,"channel":0,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1001,1001],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"b87c2925-7a61-45d9-90e6-eff4a938f978","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAIACAYAAACo4b0GAAAAAXNSR0IArs4c6QAABDxJREFUWEedlN1WU0kQhavf/4VEVEZRUVBHnfwDSQjhH+dOBQEza+/aXaf7hGTW8q7X11/tquoTSE86vxdmydKTzmJhZq1DSiRyNuBkklC10Y2q34uE8iAbUdVd6IpEjssgCHyacwqipk+7qgqnIGiaUC5nE4e0TNhCE272lEwZYzjBgeUinHCz++CBz8LpKacgDz5GkGe9B39VEL6hEx4qkiw976t7OEGe56rHiFrQQYsXOacg2eljQjqPk7jSIWFll83SFg7eQjlbA1296N/77kFCLsi9vyEIx9ga3Pv7/JVztvpwrCQDJdPxK1RlpyIvh5onnJeQ0RSETStHRGO4TEdNW0RX7P5qmKsoB1k6IPDV8M43RRV/CV5ulrZHOoRTEX6CINvMKatIssMxnJil1zl5e3TnE5LgqiAa7PVIyXA4YUHuFhwjyJv9dpUTs/QGOSgPpyIcI+S3UbX/y9+nIJqZBIFvK6cmByEjxyztHGieqKoIxwiyg2QEgvhVQ375D3vnQMnvcnJBNPy7xkFgstQiVpD3h+0qJ3L4CQpy658gSHXgzO8Pb/0NcVWTXSR74K1fBdnNVbtjdXcCZ6ycIHtLzt5YTeFw5nD2kONEjh/M0ocVRDInpIOVUVWQKMdhElc3vntB1P3jJJre+BsG+ThRVUPGNz4zCJuG8wk5foUqs1QRyp+m6gXHCWQ05SE7zRXI31ONAYdvuIrElQ78ZbocpHQ+48oDf/r7BOEBVZ+P8iGcimD4L7VjLcJXrRxuEeTLEbqL6CrIT//7Cucrenk5rszSV5SjBQ8kM1W1SMhm6Z+ZVvbyIH9y4MweqENNOsdx9cPfuQM5V3GLcDqz7OSqkOG4DAcrL5NuUyUnSPdYySToXhMkV4RbrCG9ufYKpyL8cEF6uXtNsAUI96KDpg2Za+Z+7tUjMUsVYS8SL//hgUH6UXWiXmvI4ER7hVMRPssaMjjRhHA4RkEwWCrIEL08UFVDHPAsICwfnmqehmSHcnZcboh6eaBZGuWcguh5QbjX6HQl8Ss5/KOuCfYKsg+5cirCUffP1AtVBcFV7gWHL9Yi2cHMBznHWwRRCyY3DgNLx69EuFeLlPLheSGzqiJMXkMO0QsTwnF5meQW43w4PP/u/zcKonISD/zuDxUk5PFFyEUOP3c4kwvtNc69CqLfRuXwoYJMULWacNPJhbpP0Qvda5IdblE5NZlGzqVmdmKWppfaNJyjJaci3KJFrCBHl5o5HCdyuFc4M/TCXuFUhPLsSjPDqcksJ4ezgqDFcc6hU5MrJTdOQ7TO8ZW2oOPlQfQpg8yvNXNDIOPpHne41/xaveaUSZRTkGVHP+NwTiLnWnuRoDtasFc4fsgEzjryTb0ahyQCzdLpN00Ih1dOcOAYpdMilZx7RflZ5OQDCWauHbQI+exfdf8fwlErpyEIPK9yKhJX+fAfPiRX4jpUXuwAAAAASUVORK5CYII="}],"object":{"uuid":"c6bd5824-bc57-4a38-b54f-72a75353d536","type":"Mesh","name":"sky","layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],"up":[0,1,0],"geometry":"415f4cb4-979a-4e77-873c-73c02046e9a7","material":"b1f2963e-ee6e-47ee-ab7f-0f0551e60ec2"}},{"metadata":{"version":4.7,"type":"Object","generator":"Object3D.toJSON"},"geometries":[{"uuid":"77af592a-14e2-4516-a184-fa6df38ac102","type":"PlaneGeometry","width":100,"height":100,"widthSegments":1,"heightSegments":1}],"materials":[{"uuid":"de7d6e80-967a-4ec9-a954-d51d508221fc","type":"MeshStandardMaterial","color":16777215,"roughness":0.95,"metalness":0,"emissive":0,"map":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","envMapRotation":[0,0,0,"XYZ"],"envMapIntensity":1,"side":2,"blendColor":0}],"textures":[{"uuid":"cc960a5c-2be8-4ac2-8444-54dc9a32f553","name":"","image":"3b00e891-dbb3-4b28-9f33-e46983e5ca83","mapping":300,"channel":0,"repeat":[25,25],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1023,"internalFormat":null,"type":1009,"normalized":false,"colorSpace":"srgb","minFilter":1008,"magFilter":1003,"anisotropy":1,"flipY":true,"generateMipmaps":true,"premultiplyAlpha":false,"unpackAlignment":4}],"images":[{"uuid":"3b00e891-dbb3-4b28-9f33-e46983e5ca83","url":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAACdJREFUGFdjvHnz3n8GBgYGSUkREMXAiCHw6dMnsIrnz99AVKALAAC1+hTNF4NnRwAAAABJRU5ErkJggg=="}],"object":{"uuid":"606877d1-0ef2-492a-b3a1-86029ebb72e7","type":"Mesh","name":"ground","userData":{"__m3d_phys":{"collider":"mesh"}},"layers":1,"matrix":[1,0,0,0,0,2.220446049250313e-16,-1,0,0,1,2.220446049250313e-16,0,0,0,0,1],"up":[0,1,0],"geometry":"77af592a-14e2-4516-a184-fa6df38ac102","material":"de7d6e80-967a-4ec9-a954-d51d508221fc"}}];
 window.__m3dEnvS=window.__m3dEnvS||function(s){if(!s)return false;if(s.name==="RoomEnvironment"||s.name==="DebugEnvironment")return true;return !s.background&&!s.fog&&s.children.length>0&&!s.children.some(function(c){return !!c.name;});};
 if(!window.__M3D_HOOK2){window.__M3D_HOOK2=1;const _a=THREE.Object3D.prototype.add;THREE.Object3D.prototype.add=function(){if(this.isScene){var _c=window.__M3D_SCENE;if(!_c||(window.__m3dEnvS(_c)&&!window.__m3dEnvS(this)))window.__M3D_SCENE=this;}return _a.apply(this,arguments);};}
 function _place(s){var L=new THREE.ObjectLoader();__L.forEach(function(j){try{var o=L.parse(j);var _t=(window.__M3D_SCENE&&!window.__m3dEnvS(window.__M3D_SCENE))?window.__M3D_SCENE:s;_t.add(o);var _mv=setInterval(function(){var ns=window.__M3D_SCENE;if(ns&&ns!==o.parent&&!window.__m3dEnvS(ns))ns.add(o);},500);setTimeout(function(){clearInterval(_mv);},30000);}catch(e){console.warn("local obj",e);}});}
@@ -149,6 +151,7 @@ const stairCollisionMeshes = [];
 const allCollisionMeshes = [];
 let injectedRuinsModel = null;
 let ruinModel = null;
+let injectedReconstructedModel = null;
 const AVATAR_SPEED = 4.2;
 const AVATAR_COLLISION_DISTANCE = 0.52;
 const AVATAR_FOOT_OFFSET = 0;
@@ -157,8 +160,8 @@ const STAIR_RAY_DISTANCE = 8.0;
 const STAIR_LOOK_AHEAD = 0.8;
 const MAX_PLATFORM_Y = 6.0;
 const MAX_STEP_UP = 3.0;
-const AVATAR_BASE_FLOOR_Y = 4.0;
-const FIRST_PERSON_EYE_HEIGHT = 1.6;
+const AVATAR_BASE_FLOOR_Y = 0;
+const FIRST_PERSON_EYE_HEIGHT = 0.8;
 const downwardDirection = new THREE.Vector3(0, -1, 0);
 const AVATAR_BOUND = 38;
 const CAMERA_FOLLOW_SMOOTHING = 10;
@@ -202,8 +205,8 @@ const startBtn = document.getElementById('startBtn');
 const hud = document.getElementById('hud');
 const hint = document.getElementById('hint');
 const interactionLabel = document.getElementById('interactionLabel');
-const unlockBanner = document.getElementById('unlockBanner');
 const enterReconstructionBtn = document.getElementById('enterReconstructionBtn');
+const endExplorationBtn = document.getElementById('endExplorationBtn');
 const heritagePopup = document.getElementById('heritagePopup');
 const popupTitle = document.getElementById('popupTitle');
 const popupText = document.getElementById('popupText');
@@ -229,8 +232,8 @@ scene.fog = new THREE.Fog(0xc2e0ee, 18, 70);
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.5, 3000);
 camera.far = 3000;
 camera.updateProjectionMatrix();
-camera.position.set(0, 7, 8);
-camera.lookAt(0, 4, 0);
+camera.position.set(0, 2.2, 5);
+camera.lookAt(0, 1.8, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -387,13 +390,14 @@ scene.add(treeCrownB);
 
 function updateHUD() {
   if (systemMode === 'Reconstructed') {
-    if (objectsExplored !== lastObjectsExplored) {
-      hud.textContent = `Objects Explored: ${objectsExplored} / 4`;
-      lastObjectsExplored = objectsExplored;
-    }
-  } else if (beaconsLit !== lastBeaconsLit) {
-    hud.textContent = `Heritage Beacons: ${beaconsLit} / 4`;
-    lastBeaconsLit = beaconsLit;
+    enterReconstructionBtn.style.display = 'none';
+    endExplorationBtn.style.display = 'inline-block';
+  } else if (systemMode === 'Ruins') {
+    enterReconstructionBtn.style.display = 'inline-block';
+    endExplorationBtn.style.display = 'none';
+  } else {
+    enterReconstructionBtn.style.display = 'none';
+    endExplorationBtn.style.display = 'none';
   }
 }
 
@@ -438,10 +442,10 @@ function markInteractive(mesh, type, index) {
 }
 
 function setupInteractiveModels() {
-  ruinModel = ruinModel || injectedRuinsModel || scene.getObjectByName('the ruin model');
-  reconstructedModel = reconstructedModel || scene.getObjectByName('the reconstructed model');
+  ruinModel = ruinModel || injectedRuinsModel || scene.getObjectByName('帕特农神庙遗址');
+  reconstructedModel = reconstructedModel || injectedReconstructedModel || scene.getObjectByName('帕特农神庙');
   if (ruinModel && !interactiveSetupComplete) {
-    const stones = collectDistinctMeshes(ruinModel, ['pillar', 'column', 'arch', 'crest', 'ornament', 'stone']);
+    const stones = collectDistinctMeshes(ruinModel, ['pillar', 'column', 'arch', 'capital', 'pediment', 'frieze', 'stone']);
     stones.forEach((mesh, index) => {
       prepareInteractiveStoneMaterial(mesh);
       beaconTargets.push(mesh);
@@ -451,8 +455,9 @@ function setupInteractiveModels() {
   }
   if (reconstructedModel && !reconstructedSetupComplete) {
     reconstructedModel.visible = systemMode === 'Reconstructed';
-    const meshes = collectDistinctMeshes(reconstructedModel, ['pavilion', 'table', 'display', 'ornament']);
+    const meshes = collectDistinctMeshes(reconstructedModel, ['athena', 'statue', 'column', 'capital', 'pediment', 'sculpture', 'frieze', 'relief']);
     meshes.forEach((mesh, index) => {
+      prepareInteractiveStoneMaterial(mesh);
       reconstructedTargets.push(mesh);
       markInteractive(mesh, 'object', index);
     });
@@ -518,7 +523,6 @@ function activateInteractive(mesh) {
       mesh.userData.activated = true;
       beaconsLit++;
       setHighlight(mesh, true);
-      if (beaconsLit === 4) unlockBanner.style.display = 'block';
       updateHUD();
     }
     showPopup(beaconInfos[index], false);
@@ -527,6 +531,7 @@ function activateInteractive(mesh) {
       mesh.userData.inspected = true;
       objectsExplored++;
       updateHUD();
+      if (objectsExplored === 4) setTimeout(showCompletionModal, 250);
     }
     showPopup(reconstructedInfos[index], true);
   }
@@ -557,9 +562,8 @@ function updateInteraction() {
 function enterReconstructedMode() {
   systemMode = 'Reconstructed';
   reconstructionTransition = 0.001;
-  unlockBanner.style.display = 'none';
   if (ruinModel) ruinModel.visible = false;
-  reconstructedModel = reconstructedModel || scene.getObjectByName('the reconstructed model');
+  reconstructedModel = reconstructedModel || injectedReconstructedModel || scene.getObjectByName('帕特农神庙');
   if (reconstructedModel) reconstructedModel.visible = true;
   updateHUD();
 }
@@ -576,12 +580,12 @@ function beginExploration() {
   }
   systemMode = 'Ruins';
   startOverlay.classList.add('hidden');
-  hud.style.display = 'block';
+  hud.style.display = 'flex';
   hint.style.display = 'block';
   controls.enabled = false;
   camera.position.set(0, AVATAR_BASE_FLOOR_Y + FIRST_PERSON_EYE_HEIGHT, 8);
   firstPersonYaw = 0;
-  firstPersonPitch = 0;
+  firstPersonPitch = Math.atan2(1.2 - FIRST_PERSON_EYE_HEIGHT, 12);
   firstPersonEuler.set(firstPersonPitch, firstPersonYaw, 0);
   camera.quaternion.setFromEuler(firstPersonEuler);
   setTimeout(() => { startOverlay.style.display = 'none'; }, 850);
@@ -590,11 +594,11 @@ function beginExploration() {
 }
 
 function prepareInjectedRuinsModel() {
-  ruinModel = ruinModel || injectedRuinsModel || scene.getObjectByName('the ruin model');
+  ruinModel = ruinModel || injectedRuinsModel || scene.getObjectByName('帕特农神庙遗址');
   if (!ruinModel) return;
 
   injectedRuinsModel = ruinModel;
-  ruinModel.position.set(0, 4, 0);
+  ruinModel.position.set(0, 1.0, 0);
   ruinModel.visible = true;
   ruinsCollisionMeshes.length = 0;
   stairCollisionMeshes.length = 0;
@@ -661,11 +665,11 @@ function updatePlayer(dt) {
   stairRaycaster.set(stairRayOrigin, downwardDirection);
   stairRaycaster.near = 0;
   stairRaycaster.far = STAIR_RAY_DISTANCE;
-  const theRuinModel = ruinModel || injectedRuinsModel || scene.getObjectByName('the ruin model');
+  const theRuinModel = ruinModel || injectedRuinsModel || scene.getObjectByName('帕特农神庙遗址');
   if (theRuinModel) {
     ruinModel = theRuinModel;
     injectedRuinsModel = theRuinModel;
-    theRuinModel.position.set(0, 4, 0);
+    theRuinModel.position.set(0, 1.0, 0);
     theRuinModel.visible = true;
   }
   const stairHits = theRuinModel ? stairRaycaster.intersectObject(theRuinModel, true) : [];
@@ -703,7 +707,7 @@ function updatePlayer(dt) {
 
   camera.position.x = candidatePlayerPosition.x;
   camera.position.z = candidatePlayerPosition.z;
-  camera.position.y = THREE.MathUtils.damp(camera.position.y, targetFloorY + FIRST_PERSON_EYE_HEIGHT, 10, dt);
+  camera.position.y = targetFloorY + FIRST_PERSON_EYE_HEIGHT;
 } 
 
 startBtn.addEventListener('click', beginExploration);
@@ -730,15 +734,12 @@ renderer.domElement.addEventListener('pointermove', (event) => {
   camera.quaternion.setFromEuler(firstPersonEuler);
 });
 
-renderer.domElement.addEventListener('click', () => {
-  if (systemMode !== 'Start' && hoveredInteractive && heritagePopup.style.display !== 'flex') activateInteractive(hoveredInteractive);
-});
-
 enterReconstructionBtn.addEventListener('click', enterReconstructedMode);
-closePopupBtn.addEventListener('click', () => {
-  heritagePopup.style.display = 'none';
-  if (objectsExplored === 4) showCompletionModal();
+endExplorationBtn.addEventListener('click', () => {
+  completionModal.style.display = 'flex';
+  keys.KeyW = keys.KeyA = keys.KeyS = keys.KeyD = false;
 });
+closePopupBtn.addEventListener('click', () => { heritagePopup.style.display = 'none'; });
 narrateBtn.addEventListener('click', () => {
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(popupNarrationText);
@@ -794,21 +795,33 @@ renderer.setAnimationLoop(() => {
   const t = clock.elapsedTime;
 
   prepareInjectedRuinsModel();
+  reconstructedModel = reconstructedModel || injectedReconstructedModel || scene.getObjectByName('帕特农神庙');
+  if (reconstructedModel) {
+    injectedReconstructedModel = reconstructedModel;
+    reconstructedModel.visible = systemMode === 'Reconstructed';
+  }
 
   if (systemMode === 'Start') {
-    camera.position.set(0, 7, 8);
-    camera.lookAt(0, 4, 0);
+    camera.position.set(0, 2.2, 5);
+    camera.lookAt(0, 1.8, 0);
   } else if (systemMode === 'Reconstructed' && reconstructionTransition > 0) {
     reconstructionTransition += dt;
     camera.position.x = THREE.MathUtils.damp(camera.position.x, 0, 3.5, dt);
-    camera.position.y = THREE.MathUtils.damp(camera.position.y, 1.6, 3.5, dt);
+    camera.position.y = THREE.MathUtils.damp(camera.position.y, FIRST_PERSON_EYE_HEIGHT, 3.5, dt);
     camera.position.z = THREE.MathUtils.damp(camera.position.z, 35, 3.5, dt);
-    if (camera.position.distanceTo(new THREE.Vector3(0, 1.6, 35)) < 0.08) reconstructionTransition = 0;
+    camera.lookAt(0, 1.2, 15);
+    if (camera.position.distanceTo(desiredCameraPosition.set(0, FIRST_PERSON_EYE_HEIGHT, 35)) < 0.08) {
+      reconstructionTransition = 0;
+      firstPersonYaw = Math.PI;
+      firstPersonPitch = Math.atan2(1.2 - FIRST_PERSON_EYE_HEIGHT, 12);
+      firstPersonEuler.set(firstPersonPitch, firstPersonYaw, 0);
+      camera.quaternion.setFromEuler(firstPersonEuler);
+    }
   } else {
     updatePlayer(dt);
   }
 
-  if (systemMode !== 'Start') updateInteraction();
+  interactionLabel.style.display = 'none';
   updateHUD();
   renderer.render(scene, camera);
 });
