@@ -69,14 +69,13 @@
     transition:opacity .4s ease;
   }
   #cover.hide{opacity:0;pointer-events:none;}
-  #cover-frame{position:relative;display:inline-block;line-height:0;}
+  /* 封面全屏铺满：等比缩放 + 居中裁剪 */
   #cover-img{
-    display:block;max-width:min(86vw,920px);max-height:60vh;width:auto;height:auto;object-fit:contain;
-    border-radius:14px;border:1px solid rgba(232,213,153,.35);box-shadow:0 26px 90px rgba(0,0,0,.65);
+    position:absolute;inset:0;width:100vw;height:100vh;object-fit:cover;object-position:center;
   }
-  /* 封面图内的 START 框热点：左33% 上70% 宽34% 高14%（占封面图比例） */
+  /* START 框热点：尺寸/位置由 JS 按封面图 1536x1024 与视口比例实时计算 */
   #cover-hotspot{
-    position:absolute;left:33%;top:70%;width:34%;height:14%;
+    position:absolute;left:0;top:0;width:0;height:0;
     cursor:pointer;background:transparent;border:0;padding:0;margin:0;
   }
   #cover-hotspot:focus-visible{outline:2px dashed #f4e8d4;outline-offset:-3px;}
@@ -92,10 +91,8 @@
 </head>
 <body>
 <div id="cover">
-  <div id="cover-frame">
-    <img id="cover-img" src="assets/pastport-cover.png" alt="Pastport 封面">
-    <button id="cover-hotspot" type="button" aria-label="开始游戏" title="开始游戏"></button>
-  </div>
+  <img id="cover-img" src="assets/pastport-cover.png" alt="Pastport 封面">
+  <button id="cover-hotspot" type="button" aria-label="开始游戏" title="开始游戏"></button>
 </div>
 <canvas id="c"></canvas>
 <div id="hint">WASD / 方向键移动 · 按住鼠标拖动转视角 · 点击小人让他跳一下 · 点击说明屏查看纸条 · 点击墙上的画进入对应展厅</div>
@@ -152,9 +149,24 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.ObjectLoader().parse(SCENE_JSON);
 
-/* ---------- 封面：加载时显示，点击封面图内 START 框进入 ---------- */
+/* ---------- 封面：加载时全屏显示，点击封面图内 START 框进入 ---------- */
 const coverEl = document.getElementById('cover');
 const coverHotspot = document.getElementById('cover-hotspot');
+// 封面原图 1536x1024；START 框占原图：左33% 上70% 宽34% 高14%
+const COVER_W = 1536, COVER_H = 1024;
+const HS_X = 0.33, HS_Y = 0.70, HS_W = 0.34, HS_H = 0.14;
+function layoutCoverHotspot() {
+  const vw = innerWidth, vh = innerHeight;
+  const s = Math.max(vw / COVER_W, vh / COVER_H);   // object-fit:cover 的缩放系数
+  const sw = COVER_W * s, sh = COVER_H * s;
+  const ox = (sw - vw) / 2, oy = (sh - vh) / 2;      // 居中裁剪的偏移
+  coverHotspot.style.left = (HS_X * sw - ox) + 'px';
+  coverHotspot.style.top  = (HS_Y * sh - oy) + 'px';
+  coverHotspot.style.width  = (HS_W * sw) + 'px';
+  coverHotspot.style.height = (HS_H * sh) + 'px';
+}
+addEventListener('resize', layoutCoverHotspot);
+layoutCoverHotspot();
 coverHotspot.addEventListener('click', () => {
   coverEl.classList.add('hide');
   setTimeout(() => coverEl.remove(), 450);
