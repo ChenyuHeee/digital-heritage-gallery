@@ -465,7 +465,9 @@ const characterState = {
   mixer: null,
   idle: null,
   jump: null,
+  walk: null,
   jumping: false,
+  walking: false,
   ranger: null,
   ptrDownOnChar: false,
   ptrDownTablet: null,
@@ -579,10 +581,12 @@ function setupRangerAnims() {
   });
   const idleClipSrc = clips.find((c) => /^idle_a$/i.test(c.name)) || clips.find((c) => /idle/i.test(c.name)) || null;
   const jumpClipSrc = clips.find((c) => /jump_full_short/i.test(c.name)) || clips.find((c) => /jump/i.test(c.name)) || null;
+  const walkClipSrc = clips.find((c) => /^walking_a$/i.test(c.name)) || clips.find((c) => /walking/i.test(c.name)) || null;
   if (!idleClipSrc && !jumpClipSrc) return;
 
   const idleClip = idleClipSrc ? remapClipTracks(idleClipSrc, ranger) : null;
   const jumpClip = jumpClipSrc ? remapClipTracks(jumpClipSrc, ranger) : null;
+  const walkClip = walkClipSrc ? remapClipTracks(walkClipSrc, ranger) : null;
 
   characterState.ranger = ranger;
   ranger.visible = true;
@@ -613,6 +617,11 @@ function setupRangerAnims() {
     characterState.jump.setLoop(THREE.LoopOnce, 1);
     characterState.jump.clampWhenFinished = true;
   }
+  if (walkClip) {
+    characterState.walk = characterState.mixer.clipAction(walkClip);
+    characterState.walk.enabled = true;
+    characterState.walk.setLoop(THREE.LoopRepeat, Infinity);
+  }
   characterState.mixer.addEventListener('finished', (ev) => {
     if (ev.action !== characterState.jump) return;
     characterState.jumping = false;
@@ -629,10 +638,62 @@ function setupRangerAnims() {
 function playRangerJump() {
   if (!characterState.jump || characterState.jumping) return;
   characterState.jumping = true;
+  if (characterState.walking) stopWandering();
   if (characterState.idle) characterState.idle.fadeOut(0.08);
   characterState.jump.reset();
   characterState.jump.fadeIn(0.06);
   characterState.jump.play();
+}
+
+/* ---------- 小人自主漫步（在展厅里随意走动） ---------- */
+// 漫步范围：避开两侧展龛、展台与墙面（画廊内部安全区）
+const WANDER_BOUNDS = { xMin: -4.4, xMax: 4.4, zMin: -6.2, zMax: 6.2 };
+const WANDER_SPEED = 1.1;   // 米/秒，散步速度
+let wanderTarget = null;
+let wanderPauseUntil = 0;
+const _wanderPos = new THREE.Vector2();
+const _wanderDir = new THREE.Vector2();
+
+function startWandering() {
+  if (!characterState.walk || characterState.walking) return;
+  characterState.walking = true;
+  if (characterState.idle) characterState.idle.fadeOut(0.25);
+  characterState.walk.reset().fadeIn(0.25).play();
+}
+function stopWandering() {
+  if (!characterState.walking) return;
+  characterState.walking = false;
+  characterState.walk.fadeOut(0.25);
+  if (characterState.idle) characterState.idle.reset().fadeIn(0.25).play();
+}
+function updateWander(dt, t) {
+  if (!characterState.ready || !characterState.walk) return;
+  const r = characterState.ranger;
+  if (characterState.jumping) return;            // 跳的时候不走
+  if (t < wanderPauseUntil) return;              // 休息中
+  if (!wanderTarget) {
+    // 随机挑一个点走
+    wanderTarget = new THREE.Vector2(
+      THREE.MathUtils.lerp(WANDER_BOUNDS.xMin, WANDER_BOUNDS.xMax, Math.random()),
+      THREE.MathUtils.lerp(WANDER_BOUNDS.zMin, WANDER_BOUNDS.zMax, Math.random()));
+  }
+  _wanderPos.set(r.position.x, r.position.z);
+  _wanderDir.copy(wanderTarget).sub(_wanderPos);
+  const dist = _wanderDir.length();
+  if (dist < 0.35) {
+    // 走到地方了 → 站一会儿，随机休息 2~6 秒
+    wanderTarget = null;
+    wanderPauseUntil = t + 2 + Math.random() * 4;
+    stopWandering();
+    return;
+  }
+  _wanderDir.normalize();
+  const step = Math.min(dist, WANDER_SPEED * dt);
+  r.position.x += _wanderDir.x * step;
+  r.position.z += _wanderDir.y * step;
+  // 面向移动方向（模型 XZ 镜像，需要 +PI 修正）
+  r.rotation.y = Math.atan2(_wanderDir.x, _wanderDir.y) + Math.PI;
+  startWandering();
 }
 
 /* ---------- 输入事件 ---------- */
@@ -857,6 +918,7 @@ renderer.setAnimationLoop(() => {
 
   setupRangerAnims();
   if (characterState.mixer) characterState.mixer.update(dt);
+  updateWander(dt, t);
 
   // 模型是异步加载的，前几秒周期性重新扫一次展品 / 壁灯
   if ((_frame++ % 30) === 0 && t < 45) { refreshExhibits(); if (lampsDone < 6) setupWallLamps(); }
