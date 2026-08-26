@@ -40,8 +40,17 @@ canvas{display:block}
 #fade{position:absolute;inset:0;background:#0c1014;opacity:0;pointer-events:none;transition:opacity .8s}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/"}}</script>
-</head>
-<body>
+<style>
+#back-home{
+  position:fixed;top:14px;left:14px;z-index:10000;
+  padding:9px 18px;font:600 14px/1 system-ui,-apple-system,'PingFang SC',sans-serif;
+  color:#f4e8d4;background:rgba(16,13,10,.72);border:1px solid rgba(212,180,130,.4);
+  border-radius:8px;text-decoration:none;letter-spacing:.08em;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .15s,border-color .15s;
+}
+#back-home:hover{background:rgba(94,44,31,.88);border-color:#c45c3e;color:#fff6e6;}
+</style></head>
+<body><a id="back-home" href="index.html" title="返回主页面">← 返回展厅</a>
 <div id="ui">
   <div id="topbar">
     <div id="crest"></div>

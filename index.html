@@ -62,6 +62,24 @@
   @media (max-width:600px){
     #secret-note{width:88vw;min-height:190px;padding:56px 32px 42px;font-size:19px;}
   }
+  /* ---------- 封面 ---------- */
+  #cover{
+    position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:30px;background:radial-gradient(ellipse at 50% 35%,#1c232b 0%,#0b0e12 68%);padding:24px;
+    transition:opacity .4s ease;
+  }
+  #cover.hide{opacity:0;pointer-events:none;}
+  #cover-img{
+    max-width:min(86vw,920px);max-height:60vh;width:auto;height:auto;object-fit:contain;
+    border-radius:14px;border:1px solid rgba(232,213,153,.35);box-shadow:0 26px 90px rgba(0,0,0,.65);
+  }
+  #cover-start{
+    pointer-events:auto;cursor:pointer;padding:13px 46px;border:1px solid #ead79b;border-radius:9px;
+    background:linear-gradient(180deg,#c9a254,#a97f34);color:#101817;font:750 17px/1.2 'Songti SC',Georgia,serif;
+    letter-spacing:.32em;text-indent:.32em;box-shadow:0 8px 26px rgba(0,0,0,.5);
+  }
+  #cover-start:hover{filter:brightness(1.07);transform:translateY(-1px);}
+  #cover-start:active{transform:translateY(1px);}
 </style>
 <script type="importmap">
 {
@@ -73,6 +91,10 @@
 </script>
 </head>
 <body>
+<div id="cover">
+  <img id="cover-img" src="assets/pastport-cover.png" alt="Pastport 封面">
+  <button id="cover-start" type="button">开始游戏</button>
+</div>
 <canvas id="c"></canvas>
 <div id="hint">WASD / 方向键移动 · 按住鼠标拖动转视角 · 点击小人让他跳一下 · 点击说明屏查看纸条 · 点击墙上的画进入对应展厅</div>
 <div id="note-overlay" aria-hidden="true">
@@ -127,6 +149,14 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.ObjectLoader().parse(SCENE_JSON);
+
+/* ---------- 封面：加载时显示，点击开始进入 ---------- */
+const coverEl = document.getElementById('cover');
+const coverStartBtn = document.getElementById('cover-start');
+coverStartBtn.addEventListener('click', () => {
+  coverEl.classList.add('hide');
+  setTimeout(() => coverEl.remove(), 450);
+});
 
 /* ---------- Secret-note 弹窗 ---------- */
 const noteOverlay = document.getElementById('note-overlay');
