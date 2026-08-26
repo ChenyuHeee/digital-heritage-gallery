@@ -174,6 +174,9 @@ const scene = new THREE.ObjectLoader().parse(SCENE_JSON);
 
 /* ---------- 封面：视频动画开场 → 定格封面 → 点击 START 框进入 ---------- */
 const coverEl = document.getElementById('cover');
+// 同一标签页内已看过入场动画（从子页面返回展厅）→ 跳过封面直接进入场景
+const introSeen = sessionStorage.getItem('pastport_intro_seen') === '1';
+if (introSeen) coverEl.remove();
 const coverHotspot = document.getElementById('cover-hotspot');
 const coverImg = document.getElementById('cover-img');
 const coverVideo = document.getElementById('cover-video');
@@ -240,6 +243,7 @@ coverVideo.addEventListener('ended', () => {
 
 let coverVideoBlocked = false;
 function tryCoverVideoPlay() {
+  if (introSeen) return;   // 跳过入场动画，不加载视频
   const p = coverVideo.play();
   if (!p) return;
   p.then(() => {
@@ -275,6 +279,7 @@ addEventListener('resize', () => {
 layoutCoverHotspot();
 
 coverHotspot.addEventListener('click', () => {
+  sessionStorage.setItem('pastport_intro_seen', '1');
   coverEl.classList.add('hide');
   setTimeout(() => coverEl.remove(), 450);
 });
