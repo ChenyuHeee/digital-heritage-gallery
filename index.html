@@ -182,13 +182,14 @@ const coverImg = document.getElementById('cover-img');
 const coverVideo = document.getElementById('cover-video');
 const coverCanvas = document.getElementById('cover-video-canvas');
 const coverVideoHint = document.getElementById('cover-video-hint');
-const coverCtx = coverCanvas.getContext('2d');
+const coverCtx = coverCanvas ? coverCanvas.getContext('2d') : null;
 
 // 封面原图 1536x1024；START 框占原图：左33% 上70% 宽34% 高14%
 const COVER_W = 1536, COVER_H = 1024;
 const HS_X = 0.33, HS_Y = 0.70, HS_W = 0.34, HS_H = 0.14;
 
 function layoutCoverHotspot() {
+  if (introSeen) return;   // 已看过入场动画：封面已移除，跳过全部封面逻辑
   const vw = innerWidth, vh = innerHeight;
   const s = Math.max(vw / COVER_W, vh / COVER_H);   // object-fit:cover 的缩放系数
   const sw = COVER_W * s, sh = COVER_H * s;
@@ -203,6 +204,7 @@ function layoutCoverHotspot() {
 let coverVideoStarted = false, coverVideoEnded = false, coverVideoFailed = false;
 
 function sizeCoverCanvas() {
+  if (introSeen) return;
   const dpr = Math.min(devicePixelRatio || 1, 2);
   coverCanvas.width = innerWidth * dpr;
   coverCanvas.height = innerHeight * dpr;
@@ -211,6 +213,7 @@ function sizeCoverCanvas() {
 
 // 把任意比例的源内容按 object-fit:cover 画满画布（与 #cover-img 的显示方式一致）
 function drawCoverFit(src, srcW, srcH) {
+  if (introSeen) return;
   const vw = innerWidth, vh = innerHeight;
   const s = Math.max(vw / srcW, vh / srcH);
   const w = srcW * s, h = srcH * s;
@@ -219,13 +222,14 @@ function drawCoverFit(src, srcW, srcH) {
 
 // 视频就绪前：先把静态封面画到 canvas 上，保证视频第一帧出来前画面一致
 function drawCoverPreroll() {
+  if (introSeen) return;
   if (coverImg.complete && coverImg.naturalWidth > 0 && !coverVideoStarted && !coverVideoFailed) {
     drawCoverFit(coverImg, COVER_W, COVER_H);
   }
 }
 
 function coverLoop() {
-  if (coverVideoFailed || coverVideoEnded) return;
+  if (introSeen || coverVideoFailed || coverVideoEnded) return;
   if (coverVideo.readyState >= 2 && !coverVideo.paused) {
     coverVideoStarted = true;
     coverVideoHint.classList.add('hide');
@@ -234,12 +238,14 @@ function coverLoop() {
   requestAnimationFrame(coverLoop);
 }
 
-coverVideo.addEventListener('ended', () => {
-  coverVideoEnded = true;
-  drawCoverFit(coverVideo, coverVideo.videoWidth, coverVideo.videoHeight); // 定格最后一帧
-  coverCanvas.classList.add('fade');                                      // 淡出露出静态封面
-  setTimeout(() => { coverCanvas.remove(); }, 700);
-});
+if (!introSeen) {
+  coverVideo.addEventListener('ended', () => {
+    coverVideoEnded = true;
+    drawCoverFit(coverVideo, coverVideo.videoWidth, coverVideo.videoHeight); // 定格最后一帧
+    coverCanvas.classList.add('fade');                                      // 淡出露出静态封面
+    setTimeout(() => { coverCanvas.remove(); }, 700);
+  });
+}
 
 let coverVideoBlocked = false;
 function tryCoverVideoPlay() {
@@ -278,11 +284,13 @@ addEventListener('resize', () => {
 });
 layoutCoverHotspot();
 
-coverHotspot.addEventListener('click', () => {
-  sessionStorage.setItem('pastport_intro_seen', '1');
-  coverEl.classList.add('hide');
-  setTimeout(() => coverEl.remove(), 450);
-});
+if (!introSeen) {
+  coverHotspot.addEventListener('click', () => {
+    sessionStorage.setItem('pastport_intro_seen', '1');
+    coverEl.classList.add('hide');
+    setTimeout(() => coverEl.remove(), 450);
+  });
+}
 
 /* ---------- Secret-note 弹窗 ---------- */
 const noteOverlay = document.getElementById('note-overlay');
