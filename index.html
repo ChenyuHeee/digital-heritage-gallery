@@ -85,6 +85,14 @@
   #cover-video{
     position:absolute;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none;
   }
+  /* 开场动画加载提示（视频开始播放后隐藏） */
+  #cover-video-hint{
+    position:absolute;left:50%;bottom:6vh;transform:translateX(-50%);
+    padding:6px 16px;border-radius:999px;font:600 13px/1.5 system-ui,-apple-system,'PingFang SC',sans-serif;
+    color:#f2ece1;background:rgba(20,22,26,.6);letter-spacing:.08em;pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  #cover-video-hint.hide{opacity:0;}
   /* START 框热点：尺寸/位置由 JS 按封面图 1536x1024 与视口比例实时计算 */
   #cover-hotspot{
     position:absolute;left:0;top:0;width:0;height:0;
@@ -106,6 +114,7 @@
   <img id="cover-img" src="assets/pastport-cover.png" alt="Pastport 封面">
   <canvas id="cover-video-canvas"></canvas>
   <video id="cover-video" src="assets/cover_video.mp4" muted playsinline preload="auto"></video>
+  <div id="cover-video-hint">开场动画加载中…</div>
   <button id="cover-hotspot" type="button" aria-label="开始游戏" title="开始游戏"></button>
 </div>
 <canvas id="c"></canvas>
@@ -169,6 +178,7 @@ const coverHotspot = document.getElementById('cover-hotspot');
 const coverImg = document.getElementById('cover-img');
 const coverVideo = document.getElementById('cover-video');
 const coverCanvas = document.getElementById('cover-video-canvas');
+const coverVideoHint = document.getElementById('cover-video-hint');
 const coverCtx = coverCanvas.getContext('2d');
 
 // 封面原图 1536x1024；START 框占原图：左33% 上70% 宽34% 高14%
@@ -215,6 +225,7 @@ function coverLoop() {
   if (coverVideoFailed || coverVideoEnded) return;
   if (coverVideo.readyState >= 2 && !coverVideo.paused) {
     coverVideoStarted = true;
+    coverVideoHint.classList.add('hide');
     drawCoverFit(coverVideo, coverVideo.videoWidth, coverVideo.videoHeight);
   }
   requestAnimationFrame(coverLoop);
@@ -227,14 +238,31 @@ coverVideo.addEventListener('ended', () => {
   setTimeout(() => { coverCanvas.remove(); }, 700);
 });
 
-const coverPlayPromise = coverVideo.play();
-if (coverPlayPromise) {
-  coverPlayPromise.then(() => { coverLoop(); }).catch(() => {
-    // 视频不可播（缺失/格式不支持/自动播放被拦）→ 回退为直接显示静态封面
-    coverVideoFailed = true;
-    coverCanvas.remove();
+let coverVideoBlocked = false;
+function tryCoverVideoPlay() {
+  const p = coverVideo.play();
+  if (!p) return;
+  p.then(() => {
+    coverVideoBlocked = false;
+    coverVideoFailed = false;
+    coverLoop();
+  }).catch(() => {
+    // 自动播放被拦：保留 preroll 画面，等用户第一次交互（点击/按键）再重试
+    if (coverVideo.error && coverVideo.error.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+      coverVideoFailed = true;      // 真的不支持（格式/缺失）→ 静态封面
+      coverCanvas.remove();
+      coverVideoHint.remove();
+    } else {
+      coverVideoBlocked = true;
+    }
   });
 }
+function unlockCoverVideo() {
+  if (coverVideoBlocked && !coverVideoStarted) tryCoverVideoPlay();
+}
+addEventListener('pointerdown', unlockCoverVideo);
+addEventListener('keydown', unlockCoverVideo);
+tryCoverVideoPlay();
 
 sizeCoverCanvas();
 drawCoverPreroll();
